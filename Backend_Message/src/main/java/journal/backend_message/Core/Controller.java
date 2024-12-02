@@ -13,6 +13,12 @@ public class Controller {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    private UserServiceClient userServiceClient;
+
+    @Autowired
+    private HAPIServiceClient hapiServiceClient;
+
     public Controller() {}
 
     @GetMapping("/messages")
@@ -36,14 +42,16 @@ public class Controller {
     @PostMapping("/create_message")
     public ResponseEntity<Void> createNewMessage(@RequestBody CreateMessage newMessage) {
         try {
-            User sender = userService.getUserById(newMessage.getSenderId());
+            User sender = userServiceClient.getUserById(newMessage.getSenderId());
+
             String receiverIdentifier = newMessage.getReceiverId();
             if (receiverIdentifier == null && sender.getAuthority().equals(Authority.Patient)) {
-                receiverIdentifier = hapiService.getGeneralPractitionerIdentifierByPatientIdentifier(newMessage.getSenderId());
+                receiverIdentifier = hapiServiceClient.getGeneralPractitionerByIdentifier(newMessage.getSenderId());
             }
-            User receiver = userService.getUserById(receiverIdentifier);
+            User receiver = userServiceClient.getUserById(receiverIdentifier);
             if (receiver == null)
                 ResponseEntity.badRequest().build();
+
             messageService.createNewMessage(newMessage, sender, receiver);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
