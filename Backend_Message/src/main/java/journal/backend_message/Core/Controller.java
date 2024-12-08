@@ -26,6 +26,7 @@ public class Controller {
         try {
             return ResponseEntity.ok(messageService.getLatestMessagesByUserInThread(id));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
@@ -35,6 +36,7 @@ public class Controller {
         try {
             return ResponseEntity.ok(messageService.getMessagesInThread(threadId));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
@@ -55,6 +57,7 @@ public class Controller {
             messageService.createNewMessage(newMessage, sender, receiver);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
@@ -65,6 +68,7 @@ public class Controller {
             messageService.updateMessageIsRead(threadId, receiverId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().build();
         }
     }
