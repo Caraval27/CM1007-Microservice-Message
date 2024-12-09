@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:3000", "https://journal-app-frontend.app.cloud.cbh.kth.se"})
+@CrossOrigin(origins = {"http://localhost:3000",
+        "https://journal-app-frontend.app.cloud.cbh.kth.se"})
 @RestController
 public class Controller {
     @Autowired
