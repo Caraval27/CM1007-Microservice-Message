@@ -6,8 +6,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-public class BackendMessageApplication {
+public class Lab2MessageApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(BackendMessageApplication.class, args);
+		SpringApplication.run(Lab2MessageApplication.class, args);
 	}
 }
