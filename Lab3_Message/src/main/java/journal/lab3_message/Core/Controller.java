@@ -18,7 +18,10 @@ public class Controller {
     private UserServiceClient userServiceClient;
 
     @Autowired
-    private HAPIServiceClient hapiServiceClient;
+    private HealthProducer healthProducer;
+
+    @Autowired
+    private QueueService queueService;
 
     public Controller() {}
 
@@ -49,8 +52,10 @@ public class Controller {
 
             String receiverIdentifier = newMessage.getReceiverId();
             if (receiverIdentifier == null && sender.getAuthority().equals(Authority.Patient)) {
-                receiverIdentifier = hapiServiceClient.getGeneralPractitionerByIdentifier(newMessage.getSenderId());
+                healthProducer.sendGeneralPractitionerRequest(receiverIdentifier);
+                receiverIdentifier = queueService.takeResponse();
             }
+
             User receiver = userServiceClient.getUserById(receiverIdentifier);
             if (receiver == null)
                 ResponseEntity.badRequest().build();
