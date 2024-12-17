@@ -9,7 +9,7 @@ public class HealthConsumer {
     @Autowired
     private QueueService queueService;
 
-    @KafkaListener(topics = "receive-general-practitioner-topic", groupId = "health-service-group")
+    @KafkaListener(topics = "receive-general-practitioner-topic", groupId = "message-service-group")
     public void receiveGeneralPractitionerResponse(String generalPractitioner) {
         try {
             queueService.putResponse(generalPractitioner);
