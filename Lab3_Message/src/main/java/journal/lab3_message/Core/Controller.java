@@ -18,7 +18,7 @@ public class Controller {
     private UserServiceClient userServiceClient;
 
     @Autowired
-    private HealthProducer healthProducer;
+    private TestKafka testKafka;
 
     @Autowired
     private QueueService queueService;
@@ -52,8 +52,7 @@ public class Controller {
 
             String receiverIdentifier = newMessage.getReceiverId();
             if (receiverIdentifier == null && sender.getAuthority().equals(Authority.Patient)) {
-                healthProducer.sendGeneralPractitionerRequest(receiverIdentifier);
-                receiverIdentifier = queueService.takeResponse();
+                receiverIdentifier = testKafka.sendMessage(receiverIdentifier);
             }
 
             User receiver = userServiceClient.getUserById(receiverIdentifier);
