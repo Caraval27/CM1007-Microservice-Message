@@ -6,7 +6,7 @@ RUN mvn dependency:go-offline
 
 COPY Lab3_Message/src ./src
 
-RUN mvn clean test -Dgroups=unit
+RUN mvn clean test
 
 RUN mvn clean package
 

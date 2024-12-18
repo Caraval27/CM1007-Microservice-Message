@@ -12,7 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -21,8 +23,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@Tag("unit")
-@ExtendWith(MockitoExtension.class)
+//@Tag("unit")
+//@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@ActiveProfiles("test")
 public class MessageServiceTest {
     @Mock
     private IMessageRepository messageRepository;
@@ -66,11 +70,15 @@ public class MessageServiceTest {
     @Test
     void testCreateNewMessage() {
         CreateMessage createMessage = new CreateMessage();
+        createMessage.setThreadId(-1);
+        createMessage.setTitle("Title");
+        createMessage.setBody("Body");
+        createMessage.setSenderId("senderId");
+        createMessage.setReceiverId("receiverId");
         String senderName = "SenderName";
         String receiverId = "ReceiverId";
         String receiverName = "ReceiverName";
-        //when(messageRepository.findMaxThreadId()).thenReturn(5);
-        lenient().when(messageRepository.findMaxThreadId()).thenReturn(5);
+        when(messageRepository.findMaxThreadId()).thenReturn(5);
 
         messageService.createNewMessage(createMessage, senderName, receiverId, receiverName);
 
