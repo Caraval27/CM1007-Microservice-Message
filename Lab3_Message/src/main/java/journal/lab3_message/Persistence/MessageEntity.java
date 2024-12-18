@@ -18,13 +18,13 @@ public class MessageEntity {
     private String body;
     @Column(name = "date", nullable = false)
     private LocalDateTime date;
-    @Column(name = "senderId", nullable = false)
+    @Column(name = "sender_id", nullable = false)
     private String senderId;
-    @Column(name = "senderName", nullable = false)
+    @Column(name = "sender_name", nullable = false)
     private String senderName;
-    @Column(name = "receiverId", nullable = false)
+    @Column(name = "receiver_id", nullable = false)
     private String receiverId;
-    @Column(name = "receiverName", nullable = false)
+    @Column(name = "receiver_name", nullable = false)
     private String receiverName;
     @Column(name = "is_read", nullable = false)
     private boolean read;
