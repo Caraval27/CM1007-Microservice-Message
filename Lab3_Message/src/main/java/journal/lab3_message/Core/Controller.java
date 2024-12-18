@@ -42,14 +42,19 @@ public class Controller {
     @PostMapping("/create_message")
     public ResponseEntity<Void> createNewMessage(@RequestBody CreateMessage newMessage) {
         try {
-            String receiver = newMessage.getReceiverId();
-            if (receiver == null) {
-                receiver = healthService.sendGeneralPractitionerRequest(newMessage.getSenderId());
-                if (receiver == null)
-                    ResponseEntity.badRequest().build();
+            String senderName = healthService.sendNameRequest(newMessage.getSenderId());
+
+            String receiverId = newMessage.getReceiverId();
+            if (receiverId == null) {
+                receiverId = healthService.sendGeneralPractitionerRequest(newMessage.getSenderId());
             }
 
-            messageService.createNewMessage(newMessage, receiver);
+            String receiverName = healthService.sendNameRequest(receiverId);
+
+            if (receiverName == null)
+                ResponseEntity.badRequest().build();
+
+            messageService.createNewMessage(newMessage, senderName, receiverId, receiverName);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();

@@ -35,7 +35,7 @@ public class MessageService {
         return messages;
     }
 
-    public void createNewMessage(CreateMessage message, String receiver) {
+    public void createNewMessage(CreateMessage message, String senderName, String receiverId, String receiverName) {
         int threadId = message.getThreadId();
         if (threadId == -1) {
             threadId = messageRepository.findMaxThreadId() + 1;
@@ -49,7 +49,9 @@ public class MessageService {
                         message.getBody(),
                         date,
                         message.getSenderId(),
-                        receiver,
+                        senderName,
+                        receiverId,
+                        receiverName,
                         answered
                 );
         messageRepository.save(messageEntity);

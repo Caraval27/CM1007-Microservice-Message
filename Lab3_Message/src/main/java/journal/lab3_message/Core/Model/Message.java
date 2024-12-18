@@ -10,8 +10,10 @@ public class Message {
     private String title;
     private String body;
     private LocalDateTime date;
-    private String sender;
-    private String receiver;
+    private String senderId;
+    private String senderName;
+    private String receiverId;
+    private String receiverName;
     private boolean read;
 
     public Message(MessageEntity messageEntity) {
@@ -20,8 +22,10 @@ public class Message {
         title = messageEntity.getTitle();
         body = messageEntity.getBody();
         date = messageEntity.getDate();
-        sender = messageEntity.getSender();
-        receiver = messageEntity.getReceiver();
+        senderId = messageEntity.getSenderId();
+        senderName = messageEntity.getSenderName();
+        receiverId = messageEntity.getReceiverId();
+        receiverName = messageEntity.getReceiverName();
         read = messageEntity.isRead();
     }
 
@@ -65,20 +69,36 @@ public class Message {
         this.date = date;
     }
 
-    public String getSender() {
-        return sender;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
-    public String getReceiver() {
-        return receiver;
+    public String getSenderName() {
+        return senderName;
     }
 
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getReceiverId() {
+        return receiverId;
+    }
+
+    public void setReceiverId(String receiverId) {
+        this.receiverId = receiverId;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
     }
 
     public boolean isRead() {
@@ -97,9 +117,11 @@ public class Message {
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +
                 ", date=" + date +
-                ", sender=" + sender +
-                ", receiver=" + receiver +
-                ", answered=" + read +
+                ", senderId='" + senderId + '\'' +
+                ", senderName='" + senderName + '\'' +
+                ", receiverId='" + receiverId + '\'' +
+                ", receiverName='" + receiverName + '\'' +
+                ", read=" + read +
                 '}';
     }
 }

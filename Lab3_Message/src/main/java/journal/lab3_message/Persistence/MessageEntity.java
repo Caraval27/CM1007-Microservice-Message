@@ -18,10 +18,14 @@ public class MessageEntity {
     private String body;
     @Column(name = "date", nullable = false)
     private LocalDateTime date;
-    @Column(name = "sender", nullable = false)
-    private String sender;
-    @Column(name = "receiver", nullable = false)
-    private String receiver;
+    @Column(name = "senderId", nullable = false)
+    private String senderId;
+    @Column(name = "senderName", nullable = false)
+    private String senderName;
+    @Column(name = "receiverId", nullable = false)
+    private String receiverId;
+    @Column(name = "receiverName", nullable = false)
+    private String receiverName;
     @Column(name = "is_read", nullable = false)
     private boolean read;
 
@@ -65,20 +69,36 @@ public class MessageEntity {
         this.date = date;
     }
 
-    public String getSender() {
-        return sender;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
-    public String getReceiver() {
-        return receiver;
+    public String getSenderName() {
+        return senderName;
     }
 
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getReceiverId() {
+        return receiverId;
+    }
+
+    public void setReceiverId(String receiverId) {
+        this.receiverId = receiverId;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
     }
 
     public boolean isRead() {
@@ -92,13 +112,15 @@ public class MessageEntity {
     public MessageEntity() {
     }
 
-    public MessageEntity(int threadId, String title, String body, LocalDateTime date, String sender, String receiver, boolean read) {
+    public MessageEntity(int threadId, String title, String body, LocalDateTime date, String senderId, String receiverId, String senderName, String receiverName, boolean read) {
         this.threadId = threadId;
         this.title = title;
         this.body = body;
         this.date = date;
-        this.sender = sender;
-        this.receiver = receiver;
+        this.senderId = senderId;
+        this.senderName = senderName;
+        this.receiverId = receiverId;
+        this.receiverName = receiverName;
         this.read = read;
     }
 }
