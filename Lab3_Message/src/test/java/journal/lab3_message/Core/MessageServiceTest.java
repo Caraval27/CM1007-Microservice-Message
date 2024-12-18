@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @Tag("unit")
+@ExtendWith(MockitoExtension.class)
 public class MessageServiceTest {
     @Mock
     private IMessageRepository messageRepository;
@@ -68,7 +69,8 @@ public class MessageServiceTest {
         String senderName = "SenderName";
         String receiverId = "ReceiverId";
         String receiverName = "ReceiverName";
-        when(messageRepository.findMaxThreadId()).thenReturn(5);
+        //when(messageRepository.findMaxThreadId()).thenReturn(5);
+        lenient().when(messageRepository.findMaxThreadId()).thenReturn(5);
 
         messageService.createNewMessage(createMessage, senderName, receiverId, receiverName);
 
