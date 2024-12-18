@@ -52,7 +52,7 @@ public class Controller {
 
             String receiverIdentifier = newMessage.getReceiverId();
             if (receiverIdentifier == null && sender.getAuthority().equals(Authority.Patient)) {
-                receiverIdentifier = testKafka.sendMessage(receiverIdentifier);
+                receiverIdentifier = testKafka.sendMessage(newMessage.getSenderId());
             }
 
             User receiver = userServiceClient.getUserById(receiverIdentifier);
