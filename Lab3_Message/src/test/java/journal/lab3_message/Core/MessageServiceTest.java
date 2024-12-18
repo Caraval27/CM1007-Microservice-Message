@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @Tag("unit")
-@ExtendWith(MockitoExtension.class)
 public class MessageServiceTest {
     @Mock
     private IMessageRepository messageRepository;
