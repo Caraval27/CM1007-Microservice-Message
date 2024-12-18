@@ -15,9 +15,6 @@ public class Controller {
     private MessageService messageService;
 
     @Autowired
-    private UserServiceClient userServiceClient;
-
-    @Autowired
     private HealthService healthService;
 
     public Controller() {}
@@ -45,18 +42,14 @@ public class Controller {
     @PostMapping("/create_message")
     public ResponseEntity<Void> createNewMessage(@RequestBody CreateMessage newMessage) {
         try {
-            User sender = userServiceClient.getUserById(newMessage.getSenderId());
-
-            String receiverIdentifier = newMessage.getReceiverId();
-            if (receiverIdentifier == null && sender.getAuthority().equals(Authority.Patient)) {
-                receiverIdentifier = healthService.sendGeneralPractitionerRequest(newMessage.getSenderId());
+            String receiver = newMessage.getReceiverId();
+            if (receiver == null) {
+                receiver = healthService.sendGeneralPractitionerRequest(newMessage.getSenderId());
+                if (receiver == null)
+                    ResponseEntity.badRequest().build();
             }
 
-            User receiver = userServiceClient.getUserById(receiverIdentifier);
-            if (receiver == null)
-                ResponseEntity.badRequest().build();
-
-            messageService.createNewMessage(newMessage, sender, receiver);
+            messageService.createNewMessage(newMessage, receiver);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();

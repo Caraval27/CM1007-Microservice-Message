@@ -2,7 +2,6 @@ package journal.lab3_message.Core;
 
 import journal.lab3_message.Core.Model.CreateMessage;
 import journal.lab3_message.Core.Model.Message;
-import journal.lab3_message.Core.Model.User;
 import journal.lab3_message.Persistence.IMessageRepository;
 import journal.lab3_message.Persistence.MessageEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,15 +35,23 @@ public class MessageService {
         return messages;
     }
 
-    public void createNewMessage(CreateMessage message, User sender, User receiver) {
+    public void createNewMessage(CreateMessage message, String receiver) {
         int threadId = message.getThreadId();
         if (threadId == -1) {
             threadId = messageRepository.findMaxThreadId() + 1;
         }
         LocalDateTime date = LocalDateTime.now();
         boolean answered = false;
-        MessageEntity messageEntity = new MessageEntity(threadId, message.getTitle(), message.getBody(),
-                date, sender.getEntity(), receiver.getEntity(), answered);
+        MessageEntity messageEntity =
+                new MessageEntity(
+                        threadId,
+                        message.getTitle(),
+                        message.getBody(),
+                        date,
+                        message.getSenderId(),
+                        receiver,
+                        answered
+                );
         messageRepository.save(messageEntity);
     }
 

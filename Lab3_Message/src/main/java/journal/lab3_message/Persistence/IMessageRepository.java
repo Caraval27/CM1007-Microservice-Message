@@ -14,9 +14,9 @@ import java.util.List;
 public interface IMessageRepository extends JpaRepository<MessageEntity, Integer> {
     List<MessageEntity> findByThreadId(int threadId, Sort sort);
 
-    @Query("SELECT m FROM MessageEntity m WHERE (m.sender.id = :id OR m.receiver.id = :id) " +
+    @Query("SELECT m FROM MessageEntity m WHERE (m.sender = :id OR m.receiver = :id) " +
             "AND m.date = (SELECT MAX(subM.date) FROM MessageEntity subM WHERE subM.threadId = m.threadId " +
-            "AND (subM.sender.id = :id OR subM.receiver.id = :id))" +
+            "AND (subM.sender = :id OR subM.receiver = :id))" +
             "ORDER BY m.date DESC")
     List<MessageEntity> findLatestMessagesByUserInThread(@Param("id") String id);
 
@@ -25,6 +25,6 @@ public interface IMessageRepository extends JpaRepository<MessageEntity, Integer
 
     @Transactional
     @Modifying
-    @Query("UPDATE MessageEntity m SET m.read = true WHERE m.threadId = :threadId AND m.receiver.id = :receiverId")
+    @Query("UPDATE MessageEntity m SET m.read = true WHERE m.threadId = :threadId AND m.receiver = :receiverId")
     int updateMessageIsRead(String threadId, String receiverId);
 }

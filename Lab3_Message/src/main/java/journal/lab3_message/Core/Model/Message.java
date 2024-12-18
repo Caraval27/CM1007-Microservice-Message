@@ -10,8 +10,8 @@ public class Message {
     private String title;
     private String body;
     private LocalDateTime date;
-    private User sender;
-    private User receiver;
+    private String sender;
+    private String receiver;
     private boolean read;
 
     public Message(MessageEntity messageEntity) {
@@ -20,8 +20,8 @@ public class Message {
         title = messageEntity.getTitle();
         body = messageEntity.getBody();
         date = messageEntity.getDate();
-        sender = new User(messageEntity.getSender());
-        receiver = new User(messageEntity.getReceiver());
+        sender = messageEntity.getSender();
+        receiver = messageEntity.getReceiver();
         read = messageEntity.isRead();
     }
 
@@ -65,19 +65,19 @@ public class Message {
         this.date = date;
     }
 
-    public User getSender() {
+    public String getSender() {
         return sender;
     }
 
-    public void setSender(User sender) {
+    public void setSender(String sender) {
         this.sender = sender;
     }
 
-    public User getReceiver() {
+    public String getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(User receiver) {
+    public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
 

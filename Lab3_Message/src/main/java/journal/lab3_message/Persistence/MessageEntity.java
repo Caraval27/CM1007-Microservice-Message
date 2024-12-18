@@ -18,13 +18,10 @@ public class MessageEntity {
     private String body;
     @Column(name = "date", nullable = false)
     private LocalDateTime date;
-    @ManyToOne
-    @JoinColumn(name = "sender", referencedColumnName = "id", nullable = false)
-    private UserEntity sender;
-    @ManyToOne
-    @JoinColumn(name = "receiver", referencedColumnName = "id", nullable = false)
-    private UserEntity receiver;
-
+    @Column(name = "sender", nullable = false)
+    private String sender;
+    @Column(name = "receiver", nullable = false)
+    private String receiver;
     @Column(name = "is_read", nullable = false)
     private boolean read;
 
@@ -68,19 +65,19 @@ public class MessageEntity {
         this.date = date;
     }
 
-    public UserEntity getSender() {
+    public String getSender() {
         return sender;
     }
 
-    public void setSender(UserEntity sender) {
+    public void setSender(String sender) {
         this.sender = sender;
     }
 
-    public UserEntity getReceiver() {
+    public String getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(UserEntity receiver) {
+    public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
 
@@ -95,7 +92,7 @@ public class MessageEntity {
     public MessageEntity() {
     }
 
-    public MessageEntity(int threadId, String title, String body, LocalDateTime date, UserEntity sender, UserEntity receiver, boolean read) {
+    public MessageEntity(int threadId, String title, String body, LocalDateTime date, String sender, String receiver, boolean read) {
         this.threadId = threadId;
         this.title = title;
         this.body = body;
