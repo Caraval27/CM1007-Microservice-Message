@@ -5,7 +5,10 @@ COPY Lab3_Message/pom.xml .
 RUN mvn dependency:go-offline
 
 COPY Lab3_Message/src ./src
-RUN mvn clean test -Dtest=MessageServiceTest && mvn clean package
+
+RUN mvn clean test -Dgroups=unit
+
+RUN mvn clean package
 
 FROM openjdk:17-jdk-alpine
 WORKDIR /journal_app
