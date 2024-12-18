@@ -112,7 +112,7 @@ public class MessageEntity {
     public MessageEntity() {
     }
 
-    public MessageEntity(int threadId, String title, String body, LocalDateTime date, String senderId, String receiverId, String senderName, String receiverName, boolean read) {
+    public MessageEntity(int threadId, String title, String body, LocalDateTime date, String senderId, String senderName, String receiverId, String receiverName, boolean read) {
         this.threadId = threadId;
         this.title = title;
         this.body = body;
