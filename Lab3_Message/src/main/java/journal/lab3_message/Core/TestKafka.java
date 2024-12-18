@@ -16,6 +16,9 @@ public class TestKafka {
     private String response;
 
     public String sendMessage(String requestMessage) {
+        if (requestMessage == null || requestMessage.trim().isEmpty()) {
+            throw new IllegalArgumentException("Request message must not be null or empty");
+        }
         kafkaTemplate.send(REQUEST_TOPIC, requestMessage);
 
         synchronized (this) {
