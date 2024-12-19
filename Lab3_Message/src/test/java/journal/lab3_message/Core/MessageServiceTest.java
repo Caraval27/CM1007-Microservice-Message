@@ -5,13 +5,10 @@ import journal.lab3_message.Core.Model.Message;
 import journal.lab3_message.Persistence.IMessageRepository;
 import journal.lab3_message.Persistence.MessageEntity;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
@@ -23,8 +20,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-//@Tag("unit")
-//@ExtendWith(MockitoExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
 public class MessageServiceTest {
