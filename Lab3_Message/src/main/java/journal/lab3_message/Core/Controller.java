@@ -2,13 +2,16 @@ package journal.lab3_message.Core;
 
 import journal.lab3_message.Core.Model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
-@CrossOrigin(origins = {"http://localhost:3000",
-        "https://journal-app-frontend.app.cloud.cbh.kth.se"})
 @RestController
 public class Controller {
     @Autowired
@@ -22,6 +25,12 @@ public class Controller {
     @GetMapping("/messages")
     public ResponseEntity<List<Message>> getLatestMessagesInThreads(@RequestParam String id) {
         try {
+            /*OidcUser user = (OidcUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            OidcIdToken token = user.getIdToken();
+            if (!Objects.equals(token.getPreferredUsername(), id)) {
+                return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();
+            }*/
+
             return ResponseEntity.ok(messageService.getLatestMessagesByUserInThread(id));
         } catch (Exception e) {
             e.printStackTrace();
