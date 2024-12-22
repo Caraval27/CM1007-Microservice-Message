@@ -57,7 +57,7 @@ public class MessageService {
         messageRepository.save(messageEntity);
     }
 
-    public void updateMessageIsRead(String threadId, String receiverId) {
+    public void updateMessageIsRead(int threadId, String receiverId) {
         messageRepository.updateMessageIsRead(threadId, receiverId);
     }
 }

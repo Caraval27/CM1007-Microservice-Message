@@ -82,7 +82,7 @@ public class MessageServiceTest {
 
     @Test
     void testUpdateMessageIsRead() {
-        String threadId = "1";
+        int threadId = 1;
         String receiverId = "receiverId";
         when(messageRepository.updateMessageIsRead(threadId, receiverId)).thenReturn(1);
 

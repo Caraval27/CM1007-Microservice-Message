@@ -26,5 +26,5 @@ public interface IMessageRepository extends JpaRepository<MessageEntity, Integer
     @Transactional
     @Modifying
     @Query("UPDATE MessageEntity m SET m.read = true WHERE m.threadId = :threadId AND m.receiverId = :receiverId")
-    int updateMessageIsRead(String threadId, String receiverId);
+    int updateMessageIsRead(int threadId, String receiverId);
 }

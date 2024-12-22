@@ -30,7 +30,6 @@ public class SecurityConfig {
             request.anyRequest().authenticated()
         );
         httpSecurity.oauth2ResourceServer(oath2 -> oath2.jwt(jwt -> {}));
-
         httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return httpSecurity.build();
     }

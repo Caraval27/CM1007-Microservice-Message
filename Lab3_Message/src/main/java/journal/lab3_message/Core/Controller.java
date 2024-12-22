@@ -5,8 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.oidc.OidcIdToken;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,11 +24,11 @@ public class Controller {
     @GetMapping("/messages")
     public ResponseEntity<List<Message>> getLatestMessagesInThreads(@RequestParam String id) {
         try {
-            /*OidcUser user = (OidcUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            OidcIdToken token = user.getIdToken();
-            if (!Objects.equals(token.getPreferredUsername(), id)) {
+            Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String userId = token.getClaimAsString("preferred_username").toUpperCase();
+            if (!Objects.equals(userId, id)) {
                 return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();
-            }*/
+            }
 
             return ResponseEntity.ok(messageService.getLatestMessagesByUserInThread(id));
         } catch (Exception e) {
@@ -41,7 +40,15 @@ public class Controller {
     @GetMapping("/messages_in_thread")
     public ResponseEntity<List<Message>> getMessagesInThread(@RequestParam int threadId) {
         try {
-            return ResponseEntity.ok(messageService.getMessagesInThread(threadId));
+            List<Message> messages = messageService.getMessagesInThread(threadId);
+            Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String userId = token.getClaimAsString("preferred_username").toUpperCase();
+            for (Message message : messages) {
+                if (Objects.equals(message.getSenderId(), userId) || Objects.equals(message.getReceiverId(), userId)) {
+                    return ResponseEntity.ok(messages);
+                }
+            }
+            return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
@@ -49,13 +56,18 @@ public class Controller {
     }
 
     @PostMapping("/create_message")
-    public ResponseEntity<Void> createNewMessage(@RequestBody CreateMessage newMessage) {
+    public ResponseEntity<Void> createNewMessage(@RequestBody CreateMessage message) {
         try {
-            String senderName = healthService.sendNameRequest(newMessage.getSenderId());
+            Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String userId = token.getClaimAsString("preferred_username").toUpperCase();
+            if (!userId.equals(message.getSenderId())) {
+                return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();
+            }
+            String senderName = healthService.sendNameRequest(message.getSenderId());
 
-            String receiverId = newMessage.getReceiverId();
+            String receiverId = message.getReceiverId();
             if (receiverId == null) {
-                receiverId = healthService.sendGeneralPractitionerRequest(newMessage.getSenderId());
+                receiverId = healthService.sendGeneralPractitionerRequest(message.getSenderId());
             }
 
             String receiverName = healthService.sendNameRequest(receiverId);
@@ -63,7 +75,7 @@ public class Controller {
             if (receiverName == null)
                 ResponseEntity.badRequest().build();
 
-            messageService.createNewMessage(newMessage, senderName, receiverId, receiverName);
+            messageService.createNewMessage(message, senderName, receiverId, receiverName);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,8 +84,13 @@ public class Controller {
     }
 
     @GetMapping("/read_message")
-    public ResponseEntity<Void> readMessage(@RequestParam String threadId, @RequestParam String receiverId) {
+    public ResponseEntity<Void> readMessage(@RequestParam int threadId, @RequestParam String receiverId) {
         try {
+            Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String userId = token.getClaimAsString("preferred_username").toUpperCase();
+            if (!userId.equals(receiverId)) {
+                return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();
+            }
             messageService.updateMessageIsRead(threadId, receiverId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
