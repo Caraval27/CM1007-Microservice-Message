@@ -60,7 +60,7 @@ public class HealthService {
         }
 
         ProducerRecord<String, String> record = new ProducerRecord<>("request-name-topic", id);
-        record.headers().add("Authorization", ("Bearer " + token.getTokenValue()).getBytes());
+        record.headers().add("Authorization", ("Bearer " + "12244112455").getBytes());
 
         kafkaTemplate.send(record);
 
