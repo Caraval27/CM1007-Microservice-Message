@@ -63,14 +63,14 @@ public class Controller {
             if (!userId.equals(message.getSenderId())) {
                 return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();
             }
-            String senderName = healthService.sendNameRequest(message.getSenderId());
+            String senderName = healthService.sendNameRequest(message.getSenderId(), token);
 
             String receiverId = message.getReceiverId();
             if (receiverId == null) {
-                receiverId = healthService.sendGeneralPractitionerRequest(message.getSenderId());
+                receiverId = healthService.sendGeneralPractitionerRequest(message.getSenderId(), token);
             }
 
-            String receiverName = healthService.sendNameRequest(receiverId);
+            String receiverName = healthService.sendNameRequest(receiverId, token);
 
             if (receiverName == null)
                 ResponseEntity.badRequest().build();

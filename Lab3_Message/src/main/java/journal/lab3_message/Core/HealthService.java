@@ -1,8 +1,13 @@
 package journal.lab3_message.Core;
 
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,13 +17,18 @@ public class HealthService {
 
     private String generalPractitioner;
     private String name;
+    @Autowired
+    private JwtDecoder jwtDecoder;
 
-    public String sendGeneralPractitionerRequest(String senderId) {
+    public String sendGeneralPractitionerRequest(String senderId, Jwt token) {
         if (senderId == null || senderId.trim().isEmpty()) {
             throw new IllegalArgumentException("Request message must not be null or empty");
         }
 
-        kafkaTemplate.send("request-general-practitioner-topic", senderId);
+        ProducerRecord<String, String> record = new ProducerRecord<>("request-general-practitioner-topic", senderId);
+        record.headers().add("Authorization", ("Bearer " + token.getTokenValue()).getBytes());
+
+        kafkaTemplate.send(record);
 
         synchronized (this) {
             try {
@@ -32,19 +42,27 @@ public class HealthService {
     }
 
     @KafkaListener(topics = "response-general-practitioner-topic", groupId = "message-service-group")
-    public void listenToGeneralPractitionerResponse(String generalPractitioner) {
+    public void listenToGeneralPractitionerResponse(@Payload String generalPractitioner, @Header("Authorization") String authorizationHeader) {
+        if (!authorizationHeader.startsWith("Bearer ")) {
+            return;
+        }
+        String tokenString = authorizationHeader.substring(7);
+        jwtDecoder.decode(tokenString);
         this.generalPractitioner = generalPractitioner;
         synchronized (this) {
             this.notify();
         }
     }
 
-    public String sendNameRequest(String id) {
+    public String sendNameRequest(String id, Jwt token) {
         if (id == null || id.trim().isEmpty()) {
             throw new IllegalArgumentException("Request message must not be null or empty");
         }
 
-        kafkaTemplate.send("request-name-topic", id);
+        ProducerRecord<String, String> record = new ProducerRecord<>("request-name-topic", id);
+        record.headers().add("Authorization", ("Bearer " + token.getTokenValue()).getBytes());
+
+        kafkaTemplate.send(record);
 
         synchronized (this) {
             try {
@@ -58,7 +76,12 @@ public class HealthService {
     }
 
     @KafkaListener(topics = "response-name-topic", groupId = "message-service-group")
-    public void listenToNameResponse(String name) {
+    public void listenToNameResponse(@Payload String name, @Header("Authorization") String authorizationHeader) {
+        if (!authorizationHeader.startsWith("Bearer ")) {
+            return;
+        }
+        String tokenString = authorizationHeader.substring(7);
+        jwtDecoder.decode(tokenString);
         this.name = name;
         synchronized (this) {
             this.notify();
