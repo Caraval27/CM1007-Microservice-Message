@@ -58,6 +58,7 @@ public class Controller {
     private boolean isAuthorizedById(String senderId) {
         Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = token.getClaimAsString("preferred_username").toUpperCase();
+        System.out.println("User id " + userId);
         return userId.equals(senderId);
     }
 
@@ -84,9 +85,6 @@ public class Controller {
             if (!isAuthorizedById(message.getSenderId())) {
                 return ResponseEntity.badRequest().build();
             }
-
-            if (receiverName == null)
-                ResponseEntity.badRequest().build();
 
             messageService.createNewMessage(message, senderName, receiverId, receiverName);
             return ResponseEntity.ok().build();
