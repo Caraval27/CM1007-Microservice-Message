@@ -27,7 +27,7 @@ public class Controller {
             Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             String userId = token.getClaimAsString("preferred_username").toUpperCase();
             if (!Objects.equals(userId, id)) {
-                return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();
+                return ResponseEntity.status(HttpStatusCode.valueOf(403)).build();
             }
 
             return ResponseEntity.ok(messageService.getLatestMessagesByUserInThread(id));
@@ -48,7 +48,7 @@ public class Controller {
                     return ResponseEntity.ok(messages);
                 }
             }
-            return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();
+            return ResponseEntity.status(HttpStatusCode.valueOf(403)).build();
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
@@ -61,7 +61,7 @@ public class Controller {
             Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             String userId = token.getClaimAsString("preferred_username").toUpperCase();
             if (!userId.equals(message.getSenderId())) {
-                return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();
+                return ResponseEntity.status(HttpStatusCode.valueOf(403)).build();
             }
             String senderName = healthService.sendNameRequest(message.getSenderId(), token);
 
@@ -89,7 +89,7 @@ public class Controller {
             Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             String userId = token.getClaimAsString("preferred_username").toUpperCase();
             if (!userId.equals(receiverId)) {
-                return ResponseEntity.status(HttpStatusCode.valueOf(401)).build();
+                return ResponseEntity.status(HttpStatusCode.valueOf(403)).build();
             }
             messageService.updateMessageIsRead(threadId, receiverId);
             return ResponseEntity.ok().build();
