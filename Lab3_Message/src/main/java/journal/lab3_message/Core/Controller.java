@@ -55,22 +55,35 @@ public class Controller {
         }
     }
 
+    private boolean isAuthorizedById(String senderId) {
+        Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId = token.getClaimAsString("preferred_username").toUpperCase();
+        return userId.equals(senderId);
+    }
+
     @PostMapping("/create_message")
     public ResponseEntity<Void> createNewMessage(@RequestBody CreateMessage message) {
         try {
             Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            String userId = token.getClaimAsString("preferred_username").toUpperCase();
-            if (!userId.equals(message.getSenderId())) {
+            if (!isAuthorizedById(message.getSenderId())) {
                 return ResponseEntity.status(HttpStatusCode.valueOf(403)).build();
             }
             String senderName = healthService.sendNameRequest(message.getSenderId(), token);
-
+            if (!isAuthorizedById(message.getSenderId())) {
+                return ResponseEntity.badRequest().build();
+            }
             String receiverId = message.getReceiverId();
             if (receiverId == null) {
                 receiverId = healthService.sendGeneralPractitionerRequest(message.getSenderId(), token);
+                if (!isAuthorizedById(message.getSenderId())) {
+                    return ResponseEntity.badRequest().build();
+                }
             }
 
             String receiverName = healthService.sendNameRequest(receiverId, token);
+            if (!isAuthorizedById(message.getSenderId())) {
+                return ResponseEntity.badRequest().build();
+            }
 
             if (receiverName == null)
                 ResponseEntity.badRequest().build();

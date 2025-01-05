@@ -6,8 +6,10 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,7 +49,9 @@ public class HealthService {
             return;
         }
         String tokenString = authorizationHeader.substring(7);
-        jwtDecoder.decode(tokenString);
+        Jwt token = jwtDecoder.decode(tokenString);
+        JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(token);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         this.generalPractitioner = generalPractitioner;
         synchronized (this) {
             this.notify();
@@ -81,7 +85,9 @@ public class HealthService {
             return;
         }
         String tokenString = authorizationHeader.substring(7);
-        jwtDecoder.decode(tokenString);
+        Jwt token = jwtDecoder.decode(tokenString);
+        JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(token);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         this.name = name;
         synchronized (this) {
             this.notify();
