@@ -58,7 +58,7 @@ public class Controller {
     private boolean isAuthorizedById(String senderId) {
         Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = token.getClaimAsString("preferred_username").toUpperCase();
-        return userId.equals("123");
+        return userId.equals(senderId);
     }
 
     @PostMapping("/create-message")
