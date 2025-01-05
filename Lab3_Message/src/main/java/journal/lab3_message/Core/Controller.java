@@ -37,7 +37,7 @@ public class Controller {
         }
     }
 
-    @GetMapping("/messages_in_thread")
+    @GetMapping("/messages-in-thread")
     public ResponseEntity<List<Message>> getMessagesInThread(@RequestParam int threadId) {
         try {
             List<Message> messages = messageService.getMessagesInThread(threadId);
@@ -61,7 +61,7 @@ public class Controller {
         return userId.equals(senderId);
     }
 
-    @PostMapping("/create_message")
+    @PostMapping("/create-message")
     public ResponseEntity<Void> createNewMessage(@RequestBody CreateMessage message) {
         try {
             Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -96,7 +96,7 @@ public class Controller {
         }
     }
 
-    @GetMapping("/read_message")
+    @GetMapping("/read-message")
     public ResponseEntity<Void> readMessage(@RequestParam int threadId, @RequestParam String receiverId) {
         try {
             Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
