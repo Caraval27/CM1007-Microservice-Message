@@ -57,6 +57,7 @@ public class Controller {
 
     private boolean isAuthorizedById(String senderId) {
         Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println(SecurityContextHolder.getContext().getAuthentication());
         String userId = token.getClaimAsString("preferred_username").toUpperCase();
         System.out.println("User id " + userId);
         return userId.equals(senderId);
