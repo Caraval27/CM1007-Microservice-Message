@@ -25,7 +25,7 @@ public class HealthService {
 
     public String sendGeneralPractitionerRequest(String senderId, Jwt token) {
         generalPractitioner = null;
-        this.senderId = "123";
+        this.senderId = senderId;
 
         ProducerRecord<String, String> record = new ProducerRecord<>("request-general-practitioner-topic", senderId);
         record.headers().add("Authorization", ("Bearer " + token.getTokenValue()).getBytes());
@@ -105,7 +105,6 @@ public class HealthService {
 
     private boolean isAuthorizedById(Jwt token) {
         String userId = token.getClaimAsString("preferred_username").toUpperCase();
-        System.out.println("User id " + userId);
         return userId.equals(senderId);
     }
 }
