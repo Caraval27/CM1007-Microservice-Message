@@ -51,7 +51,9 @@ public class HealthService {
         String tokenString = authorizationHeader.substring(7);
         try {
             Jwt token = jwtDecoder.decode(tokenString);
-            this.generalPractitioner = generalPractitioner;
+            if (isAuthorizedById(token)) {
+                this.generalPractitioner = generalPractitioner;
+            }
             synchronized (this) {
                 this.notify();
             }
@@ -61,9 +63,9 @@ public class HealthService {
         }
     }
 
-    public String sendNameRequest(String id, Jwt token) {
+    public String sendNameRequest(String id, String senderId, Jwt token) {
         name = null;
-        this.senderId = id;
+        this.senderId = senderId;
 
         ProducerRecord<String, String> record = new ProducerRecord<>("request-name-topic", id);
         record.headers().add("Authorization", ("Bearer " + token.getTokenValue()).getBytes());

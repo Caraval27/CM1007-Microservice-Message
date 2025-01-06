@@ -64,7 +64,7 @@ public class Controller {
                 return ResponseEntity.status(HttpStatusCode.valueOf(403)).build();
             }
 
-            String senderName = healthService.sendNameRequest(message.getSenderId(), token);
+            String senderName = healthService.sendNameRequest(message.getSenderId(), message.getSenderId(), token);
             if (senderName == null) {
                 return ResponseEntity.badRequest().build();
 
@@ -78,7 +78,7 @@ public class Controller {
                 }
             }
 
-            String receiverName = healthService.sendNameRequest(receiverId, token);
+            String receiverName = healthService.sendNameRequest(receiverId, message.getSenderId(), token);
             if (receiverName == null) {
                 return ResponseEntity.badRequest().build();
             }
