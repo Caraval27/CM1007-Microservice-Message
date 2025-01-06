@@ -65,31 +65,6 @@ class HealthServiceTest {
     }
 
     @Test
-    void testSendGeneralPractitionerRequest_withEmptySenderId() {
-        String senderId = "";
-        Jwt mockJwt = mock(Jwt.class);
-        when(mockJwt.getTokenValue()).thenReturn("mockToken");
-        when(jwtDecoder.decode("mockToken")).thenReturn(mockJwt);
-        when(mockJwt.getClaimAsString("preferred_username")).thenReturn(senderId);
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                healthService.sendGeneralPractitionerRequest(senderId, mockJwt));
-        assertEquals("Request message must not be null or empty", exception.getMessage());
-        verifyNoInteractions(kafkaTemplate);
-    }
-
-    @Test
-    void testSendGeneralPractitionerRequest_withNullSenderId() {
-        String senderId = null;
-        Jwt mockJwt = mock(Jwt.class);
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                healthService.sendGeneralPractitionerRequest(senderId, mockJwt));
-        assertEquals("Request message must not be null or empty", exception.getMessage());
-        verifyNoInteractions(kafkaTemplate);
-    }
-
-    @Test
     void testSendNameRequest_withValidId() {
         String id = "67890";
         String senderId = "12345";
@@ -119,35 +94,5 @@ class HealthServiceTest {
         assertEquals("Bearer mockToken", new String(sentRecord.headers().lastHeader("Authorization").value()));
 
         assertEquals(expectedResponse, response);
-    }
-
-    @Test
-    void testSendNameRequest_withEmptyId() {
-        String id = "";
-        String senderId = "12345";
-        Jwt mockJwt = mock(Jwt.class);
-        when(mockJwt.getTokenValue()).thenReturn("mockToken");
-        when(jwtDecoder.decode("mockToken")).thenReturn(mockJwt);
-        when(mockJwt.getClaimAsString("preferred_username")).thenReturn(senderId);
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                healthService.sendNameRequest(id, senderId, mockJwt));
-        assertEquals("Request message must not be null or empty", exception.getMessage());
-        verifyNoInteractions(kafkaTemplate);
-    }
-
-    @Test
-    void testSendNameRequest_withNullId() {
-        String id = null;
-        String senderId = "12345";
-        Jwt mockJwt = mock(Jwt.class);
-        when(mockJwt.getTokenValue()).thenReturn("mockToken");
-        when(jwtDecoder.decode("mockToken")).thenReturn(mockJwt);
-        when(mockJwt.getClaimAsString("preferred_username")).thenReturn(senderId);
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                healthService.sendNameRequest(id, senderId, mockJwt));
-        assertEquals("Request message must not be null or empty", exception.getMessage());
-        verifyNoInteractions(kafkaTemplate);
     }
 }

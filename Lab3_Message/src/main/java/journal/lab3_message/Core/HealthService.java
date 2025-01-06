@@ -22,10 +22,6 @@ public class HealthService {
     private JwtDecoder jwtDecoder;
 
     public String sendGeneralPractitionerRequest(String senderId, Jwt token) {
-        if (senderId == null || senderId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Request message must not be null or empty");
-        }
-
         generalPractitioner = null;
         this.senderId = senderId;
 
@@ -66,9 +62,6 @@ public class HealthService {
     }
 
     public String sendNameRequest(String id, String senderId, Jwt token) {
-        if (id == null || id.trim().isEmpty()) {
-            throw new IllegalArgumentException("Request message must not be null or empty");
-        }
         name = null;
         this.senderId = senderId;
 
