@@ -86,8 +86,9 @@ public class HealthService {
         }
         String tokenString = authorizationHeader.substring(7);
         Jwt token = jwtDecoder.decode(tokenString);
+        System.out.println(token.getClaimAsString("preferred_username"));
         JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(token);
-        SecurityContextHolder.clearContext();
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         this.name = name;
         synchronized (this) {
             this.notify();
