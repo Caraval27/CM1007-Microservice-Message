@@ -25,7 +25,7 @@ public class HealthService {
 
     public String sendGeneralPractitionerRequest(String senderId, Jwt token) {
         generalPractitioner = null;
-        this.senderId = senderId;
+        this.senderId = "123";
 
         ProducerRecord<String, String> record = new ProducerRecord<>("request-general-practitioner-topic", senderId);
         record.headers().add("Authorization", ("Bearer " + token.getTokenValue()).getBytes());
