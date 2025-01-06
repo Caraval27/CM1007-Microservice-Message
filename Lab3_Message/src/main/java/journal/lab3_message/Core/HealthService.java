@@ -9,6 +9,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +17,15 @@ import org.springframework.stereotype.Service;
 public class HealthService {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
-
+    private String senderId;
     private String generalPractitioner;
     private String name;
     @Autowired
     private JwtDecoder jwtDecoder;
 
     public String sendGeneralPractitionerRequest(String senderId, Jwt token) {
-        if (senderId == null || senderId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Request message must not be null or empty");
-        }
+        generalPractitioner = null;
+        this.senderId = senderId;
 
         ProducerRecord<String, String> record = new ProducerRecord<>("request-general-practitioner-topic", senderId);
         record.headers().add("Authorization", ("Bearer " + token.getTokenValue()).getBytes());
@@ -36,7 +36,7 @@ public class HealthService {
             try {
                 this.wait(10000);
             } catch (InterruptedException e) {
-                throw new RuntimeException("Interrupted while waiting for response");
+                return null;
             }
         }
 
@@ -49,19 +49,21 @@ public class HealthService {
             return;
         }
         String tokenString = authorizationHeader.substring(7);
-        Jwt token = jwtDecoder.decode(tokenString);
-        JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(token);
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        this.generalPractitioner = generalPractitioner;
-        synchronized (this) {
-            this.notify();
+        try {
+            Jwt token = jwtDecoder.decode(tokenString);
+            this.generalPractitioner = generalPractitioner;
+            synchronized (this) {
+                this.notify();
+            }
+        }
+        catch (JwtException e) {
+
         }
     }
 
     public String sendNameRequest(String id, Jwt token) {
-        if (id == null || id.trim().isEmpty()) {
-            throw new IllegalArgumentException("Request message must not be null or empty");
-        }
+        name = null;
+        this.senderId = id;
 
         ProducerRecord<String, String> record = new ProducerRecord<>("request-name-topic", id);
         record.headers().add("Authorization", ("Bearer " + token.getTokenValue()).getBytes());
@@ -72,7 +74,7 @@ public class HealthService {
             try {
                 this.wait(10000);
             } catch (InterruptedException e) {
-                throw new RuntimeException("Interrupted while waiting for response");
+                return null;
             }
         }
 
@@ -85,12 +87,23 @@ public class HealthService {
             return;
         }
         String tokenString = authorizationHeader.substring(7);
-        Jwt token = jwtDecoder.decode(tokenString);
-        JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(token);
-        SecurityContextHolder.clearContext();
-        this.name = name;
-        synchronized (this) {
-            this.notify();
+        try {
+            Jwt token = jwtDecoder.decode(tokenString);
+            if (isAuthorizedById(token)) {
+                this.name = name;
+            }
+            synchronized (this) {
+                this.notify();
+            }
         }
+        catch (JwtException e) {
+
+        }
+    }
+
+    private boolean isAuthorizedById(Jwt token) {
+        String userId = token.getClaimAsString("preferred_username").toUpperCase();
+        System.out.println("User id " + userId);
+        return userId.equals(senderId);
     }
 }

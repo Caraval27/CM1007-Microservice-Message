@@ -55,39 +55,36 @@ public class Controller {
         }
     }
 
-    private boolean isAuthorizedById(String senderId) {
-        Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(SecurityContextHolder.getContext().getAuthentication());
-        String userId = token.getClaimAsString("preferred_username").toUpperCase();
-        System.out.println("User id " + userId);
-        return userId.equals(senderId);
-    }
-
     @PostMapping("/create-message")
     public ResponseEntity<Void> createNewMessage(@RequestBody CreateMessage message) {
         try {
             Jwt token = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (!isAuthorizedById(message.getSenderId())) {
+            String userId = token.getClaimAsString("preferred_username").toUpperCase();
+            if (!userId.equals(message.getSenderId())) {
                 return ResponseEntity.status(HttpStatusCode.valueOf(403)).build();
             }
+
             String senderName = healthService.sendNameRequest(message.getSenderId(), token);
-            if (!isAuthorizedById(message.getSenderId())) {
+            if (senderName == null) {
                 return ResponseEntity.badRequest().build();
+
             }
+
             String receiverId = message.getReceiverId();
             if (receiverId == null) {
                 receiverId = healthService.sendGeneralPractitionerRequest(message.getSenderId(), token);
-                if (!isAuthorizedById(message.getSenderId())) {
+                if (receiverId == null) {
                     return ResponseEntity.badRequest().build();
                 }
             }
 
             String receiverName = healthService.sendNameRequest(receiverId, token);
-            if (!isAuthorizedById(message.getSenderId())) {
+            if (receiverName == null) {
                 return ResponseEntity.badRequest().build();
             }
 
             messageService.createNewMessage(message, senderName, receiverId, receiverName);
+
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();
